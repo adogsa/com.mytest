@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity
          */
         GameAnalytics.setDebugMode(true); // for debug
 
-        int result = GameAnalytics.initializeSdk(getApplicationContext(), "8defe998920007c5d5f7b7f50ddc7865ebce8e5231c8918bccd5022bcf8430d3", "R0YnoB8b", "AppVersion", false);
+        int result = GameAnalytics.initializeSdk(getApplicationContext(), "8defe998920007c5d5f7b7f50ddc7865ebce8e5231c8918bccd5022bcf8430d3", "R0YnoB8b", "AppVersion", true);
 
         if (result != GameAnalytics.S_SUCCESS) {
             Log.d(TAG, "initialize error " + GameAnalytics.getResultMessage(result));
