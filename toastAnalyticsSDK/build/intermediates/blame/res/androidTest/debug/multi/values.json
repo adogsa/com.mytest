@@ -1,0 +1,106 @@
+[
+    {
+        "outputFile": "C:\\WorkSpace\\com.mytest\\toastAnalyticsSDK\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values\\values.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endColumn": 65,
+                    "endOffset": 116
+                },
+                "from": {
+                    "file": "C:\\WorkSpace\\com.mytest\\toastAnalyticsSDK\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 2,
+                        "startColumn": 4,
+                        "startOffset": 55,
+                        "endColumn": 65,
+                        "endOffset": 116
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 121,
+                    "endColumn": 69,
+                    "endOffset": 186
+                },
+                "from": {
+                    "file": "C:\\WorkSpace\\com.mytest\\toastAnalyticsSDK\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 121,
+                        "endColumn": 69,
+                        "endOffset": 186
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 4,
+                    "startColumn": 4,
+                    "startOffset": 191,
+                    "endColumn": 51,
+                    "endOffset": 238
+                },
+                "from": {
+                    "file": "C:\\WorkSpace\\com.mytest\\toastAnalyticsSDK\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 4,
+                        "startOffset": 191,
+                        "endColumn": 51,
+                        "endOffset": 238
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 5,
+                    "startColumn": 4,
+                    "startOffset": 243,
+                    "endLine": 11,
+                    "endColumn": 12,
+                    "endOffset": 529
+                },
+                "from": {
+                    "file": "C:\\WorkSpace\\com.mytest\\toastAnalyticsSDK\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 5,
+                        "startColumn": 4,
+                        "startOffset": 243,
+                        "endLine": 11,
+                        "endColumn": 12,
+                        "endOffset": 529
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 12,
+                    "startColumn": 4,
+                    "startOffset": 534,
+                    "endLine": 14,
+                    "endColumn": 12,
+                    "endOffset": 689
+                },
+                "from": {
+                    "file": "C:\\WorkSpace\\com.mytest\\toastAnalyticsSDK\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 12,
+                        "startColumn": 4,
+                        "startOffset": 534,
+                        "endLine": 14,
+                        "endColumn": 12,
+                        "endOffset": 689
+                    }
+                }
+            }
+        ]
+    }
+]
