@@ -29,6 +29,7 @@ public class LoadJSONUtil extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... strings) {
         try {
+            System.out.println("jjw : " + strings[0]   );
 
             return loadJSON(strings[0]);
         } catch (IOException e) {
@@ -39,6 +40,7 @@ public class LoadJSONUtil extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String response) {
+        System.out.println("jjw : onPostExecute " + response);
 
         if (response != null) {
 
@@ -52,6 +54,7 @@ public class LoadJSONUtil extends AsyncTask<String, Void, String> {
 
     private String loadJSON(String jsonURL) throws IOException {
 
+        System.out.println("jjw loadJSON ");
         URL url = new URL(jsonURL);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setReadTimeout(10000);
@@ -70,6 +73,7 @@ public class LoadJSONUtil extends AsyncTask<String, Void, String> {
         }
 
         in.close();
+        System.out.println("jjw response.toString() " + response.toString());
         return response.toString();
     }
 }
