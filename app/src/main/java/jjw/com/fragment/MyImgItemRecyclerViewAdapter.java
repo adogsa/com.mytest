@@ -81,7 +81,7 @@ public class MyImgItemRecyclerViewAdapter extends RecyclerView.Adapter<MyImgItem
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + " title : " + mTitleView + " content : " + mContentView.getText() + "'";
         }
     }
 }

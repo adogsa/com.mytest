@@ -9,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,9 @@ import android.view.View;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.toast.android.analytics.GameAnalytics;
+import com.toast.android.analytics.common.Analytics;
+import com.toast.android.analytics.googleplayservices.GooglePlayServicesManager;
 
 import jjw.com.fragment.ItemFragment;
 import jjw.com.fragment.dummy.DummyContent;
@@ -25,6 +29,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ItemFragment.OnListFragmentInteractionListener {
 
     private AdView mAdView;
+    private String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +37,31 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        /**
+         * toast cloud initialization
+         */
+        GameAnalytics.setDebugMode(true); // for debug
+
+        int result = GameAnalytics.initializeSdk(getApplicationContext(), "8defe998920007c5d5f7b7f50ddc7865ebce8e5231c8918bccd5022bcf8430d3", "R0YnoB8b", "AppVersion", true);
+
+        if (result != GameAnalytics.S_SUCCESS) {
+            Log.d(TAG, "initialize error " + GameAnalytics.getResultMessage(result));
+
+        }
+
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                String AdId = GooglePlayServicesManager.getInstance().getAdvertiseID(getApplicationContext());
+                GameAnalytics.setUserId(AdId, false);
+            }
+        });
+        t.start();
+
+
+        /**
+         * navigation
+         */
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -51,10 +81,13 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Initialize the Mobile Ads SDK.
-        MobileAds.initialize(this, "ca-app-pub-7255673243724911~4319766789");
-//        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
 
+        /**
+         * Initialize the Mobile Ads SDK.
+         */
+        MobileAds.initialize(this, "ca-app-pub-7255673243724911~4319766789");
+
+//        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
 
         // Gets the ad view defined in layout/ad_fragment.xml with ad unit ID set in
         // values/strings.xml.
@@ -128,6 +161,8 @@ public class MainActivity extends AppCompatActivity
                     .setAction("Action", null).show();
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
+            GameAnalytics.traceEvent("gallery", "gallery_code", "FEVER", GameAnalytics.getVersion(), 1, 10);
+
             Snackbar.make(findViewById(R.id.drawer_layout), "nav_gallery", Snackbar.LENGTH_INDEFINITE)
                     .setAction("Action", null).show();
 
@@ -144,6 +179,7 @@ public class MainActivity extends AppCompatActivity
                     .setAction("Action", null).show();
 
         } else if (id == R.id.nav_send) {
+
             Snackbar.make(findViewById(R.id.drawer_layout), "공사 예정입니다.", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
 
@@ -165,6 +201,9 @@ public class MainActivity extends AppCompatActivity
     /** Called when leaving the activity */
     @Override
     public void onPause() {
+        // background 상태로 전환된 것을 서버에게  알림
+        GameAnalytics.traceDeactivation(this);
+
         if (mAdView != null) {
             mAdView.pause();
         }
@@ -175,6 +214,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
+
+        // foreground 상태로 전환된 것을 서버에게 알림
+        GameAnalytics.traceActivation(this);
+
         if (mAdView != null) {
             mAdView.resume();
         }

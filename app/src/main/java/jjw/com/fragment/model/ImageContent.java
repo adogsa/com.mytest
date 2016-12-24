@@ -5,6 +5,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.toast.android.analytics.common.utils.JsonUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,13 +41,13 @@ public class ImageContent {
     public static final Map<String, OneImageItem> ITEM_MAP = new HashMap<String, OneImageItem>();
 
     private static ItemFragment.OnListFragmentInteractionListener  mListClickListener;
-    private String JSON_URL = "";
+    private String JSON_URL = "http://demo2587971.mockable.io/images";
     private static View mView;
 
     public void makeList(String jsonUrl, View view, ItemFragment.OnListFragmentInteractionListener listener){
         mView = view;
         mListClickListener = listener;
-        new LoadJSONUtil(new onLoadJsonDataListener()).execute(jsonUrl);
+        new LoadJSONUtil(new onLoadJsonDataListener()).execute(JSON_URL);
     }
 
 
@@ -79,14 +81,20 @@ public class ImageContent {
 
                 for(int index = 0; index < jArray.length(); index++){
                     JSONObject json_data = jArray.getJSONObject(index);
+
+                    System.out.println("jjw : " + json_data );
+
                     OneImageItem data = new OneImageItem(
                             json_data.getString("title")
                             , json_data.getString("url")
-                            , json_data.getString("url")
+                            , json_data.getString("date_taken")
                     );
 
                     ITEMS.add(data);
                 }
+
+                System.out.println("jjw :  Item " + ITEMS);
+                System.out.println("jjw :  Item " + ITEMS.toString());
 
 
                 // Set the adapter
