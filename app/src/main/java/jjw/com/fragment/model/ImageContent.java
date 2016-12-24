@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.toast.android.analytics.common.utils.JsonUtils;
+import com.toast.android.analytics.common.utils.StringUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,12 +58,24 @@ public class ImageContent {
     public static class OneImageItem {
         public final String title;
         public final String img_url;
-        public final String content;
+        public final String img_size_width;
+        public final String img_size_height;
+        public final String date_taken;
 
-        public OneImageItem(String title, String img_url, String content) {
+        public OneImageItem(String title, String img_url, String img_size_height, String img_size_width, String date_taken) {
             this.title = title;
             this.img_url = img_url;
-            this.content = content;
+            this.img_size_width = img_size_width;
+            this.img_size_height = img_size_height;
+            this.date_taken = date_taken;
+        }
+
+        public String getImg_size(){
+            if(StringUtil.isEmpty(img_size_height) == true){
+                return "";
+            } else {
+                return img_size_width + " X " + img_size_height;
+            }
         }
 
         @Override
@@ -77,25 +90,23 @@ public class ImageContent {
         public void onLoaded(String jsonData) {
 
             try {
-                JSONArray jArray = new JSONArray(jsonData);
+                JSONObject json = new JSONObject(jsonData);
+
+                JSONArray jArray = json.getJSONArray("photos");
 
                 for(int index = 0; index < jArray.length(); index++){
                     JSONObject json_data = jArray.getJSONObject(index);
 
-                    System.out.println("jjw : " + json_data );
-
                     OneImageItem data = new OneImageItem(
-                            json_data.getString("title")
-                            , json_data.getString("url")
-                            , json_data.getString("date_taken")
+                            LoadJSONUtil.getJsonValue(json_data, "title")
+                            , LoadJSONUtil.getJsonValue(json_data, "url")
+                            , LoadJSONUtil.getJsonValue(json_data, "width")
+                            , LoadJSONUtil.getJsonValue(json_data, "height")
+                            , LoadJSONUtil.getJsonValue(json_data, "date_taken")
                     );
 
                     ITEMS.add(data);
                 }
-
-                System.out.println("jjw :  Item " + ITEMS);
-                System.out.println("jjw :  Item " + ITEMS.toString());
-
 
                 // Set the adapter
                 if (mView instanceof RecyclerView) {

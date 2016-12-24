@@ -157,33 +157,34 @@ public class MainActivity extends AppCompatActivity
 //
 //            startActivity(goPicture);
 
-            Snackbar.make(findViewById(R.id.drawer_layout), "nav_camera", Snackbar.LENGTH_SHORT)
+            Snackbar.make(findViewById(R.id.drawer_layout), "기획중입니다.", Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-            GameAnalytics.traceEvent("gallery", "gallery_code", "FEVER", GameAnalytics.getVersion(), 1, 10);
-
-            Snackbar.make(findViewById(R.id.drawer_layout), "nav_gallery", Snackbar.LENGTH_INDEFINITE)
-                    .setAction("Action", null).show();
-
-        } else if (id == R.id.nav_slideshow) {
-            Snackbar.make(findViewById(R.id.drawer_layout), "nav_slideshow", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-
-        } else if (id == R.id.nav_manage) {
-            Snackbar.make(findViewById(R.id.drawer_layout), "nav_manage", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-
-        } else if (id == R.id.nav_share) {
-            Snackbar.make(findViewById(R.id.drawer_layout), "nav_share", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-
-        } else if (id == R.id.nav_send) {
-
-            Snackbar.make(findViewById(R.id.drawer_layout), "공사 예정입니다.", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-
         }
+//        else if (id == R.id.nav_gallery) {
+//            GameAnalytics.traceEvent("gallery", "gallery_code", "FEVER", GameAnalytics.getVersion(), 1, 10);
+//
+//            Snackbar.make(findViewById(R.id.drawer_layout), "기획중입니다.", Snackbar.LENGTH_INDEFINITE)
+//                    .setAction("Action", null).show();
+//
+//        } else if (id == R.id.nav_slideshow) {
+//            Snackbar.make(findViewById(R.id.drawer_layout), "기획중입니다.", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show();
+//
+//        } else if (id == R.id.nav_manage) {
+//            Snackbar.make(findViewById(R.id.drawer_layout), "기획중입니다.", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show();
+//
+//        } else if (id == R.id.nav_share) {
+//            Snackbar.make(findViewById(R.id.drawer_layout), "기획중입니다.", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show();
+//
+//        } else if (id == R.id.nav_send) {
+//
+//            Snackbar.make(findViewById(R.id.drawer_layout), "공사 예정입니다.", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show();
+//
+//        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

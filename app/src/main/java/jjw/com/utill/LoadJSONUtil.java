@@ -2,6 +2,9 @@ package jjw.com.utill;
 
 import android.os.AsyncTask;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -75,5 +78,24 @@ public class LoadJSONUtil extends AsyncTask<String, Void, String> {
         in.close();
         System.out.println("jjw response.toString() " + response.toString());
         return response.toString();
+    }
+
+    /**
+     * json객체에서 임의의 키값이 있으면 리턴하고 없으면 ""값을 리턴합니다.
+     * @param json
+     * @param key
+     * @return
+     */
+    public static String getJsonValue(JSONObject json, String key){
+        if(json.has(key)){
+            try {
+                return json.getString(key);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return "";
+            }
+        } else {
+            return "";
+        }
     }
 }

@@ -1,10 +1,15 @@
 package jjw.com.fragment;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.toast.android.analytics.common.utils.StringUtil;
 
 import java.util.List;
 
@@ -22,6 +27,7 @@ public class MyImgItemRecyclerViewAdapter extends RecyclerView.Adapter<MyImgItem
     private String TAG = MyImgItemRecyclerViewAdapter.class.getSimpleName();
     private final List<ImageContent.OneImageItem> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private Context mParentContext = null;
 
     public MyImgItemRecyclerViewAdapter(List<ImageContent.OneImageItem> items, OnListFragmentInteractionListener listener) {
         System.out.println(TAG + " jjw MyItemRecyclerViewAdapter  ");
@@ -34,6 +40,7 @@ public class MyImgItemRecyclerViewAdapter extends RecyclerView.Adapter<MyImgItem
         System.out.println(TAG + " jjw onCreateViewHolder viewType: " + viewType);
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_item, parent, false);
+        mParentContext = parent.getContext();
         return new ViewHolder(view);
     }
 
@@ -43,8 +50,21 @@ public class MyImgItemRecyclerViewAdapter extends RecyclerView.Adapter<MyImgItem
 
         holder.mItem = mValues.get(position);
         holder.mTitleView.setText(mValues.get(position).title);
-        holder.mContentView.setText(mValues.get(position).content);
-        holder.mImgUrlView.setText(mValues.get(position).img_url);
+        holder.mDateTakenView.setText(mValues.get(position).date_taken);
+        String one_img_url = mValues.get(position).img_url;
+        holder.mImgUrlView.setText(one_img_url);
+        holder.mImgSizeView.setText(mValues.get(position).getImg_size());
+
+        if(StringUtil.isEmpty(one_img_url) == false){
+            // 이미지 표현
+            Glide.with(mParentContext).load(one_img_url).into(holder.mOneImgView);
+
+            holder.mOneImgView.setVisibility(View.VISIBLE);
+        } else {
+            holder.mOneImgView.setImageDrawable(null);
+            holder.mOneImgView.setVisibility(View.GONE);
+        }
+
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,8 +86,10 @@ public class MyImgItemRecyclerViewAdapter extends RecyclerView.Adapter<MyImgItem
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mTitleView;
-        public final TextView mContentView;
+        public final TextView mDateTakenView;
         public final TextView mImgUrlView;
+        public final TextView mImgSizeView;
+        public final ImageView mOneImgView;
 
         public ImageContent.OneImageItem mItem;
 
@@ -75,13 +97,21 @@ public class MyImgItemRecyclerViewAdapter extends RecyclerView.Adapter<MyImgItem
             super(view);
             mView = view;
             mTitleView = (TextView) view.findViewById(R.id.title);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mDateTakenView = (TextView) view.findViewById(R.id.date_taken);
             mImgUrlView = (TextView) view.findViewById(R.id.img_url);
+            mOneImgView = (ImageView) view.findViewById(R.id.oneimage);
+            mImgSizeView = (TextView) view.findViewById(R.id.image_size);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + " title : " + mTitleView + " content : " + mContentView.getText() + "'";
+            return super.toString() + " '" + " title : " + mTitleView + " content : " + mDateTakenView.getText() + "'";
         }
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        mParentContext = null;
+        super.onDetachedFromRecyclerView(recyclerView);
     }
 }
