@@ -30,6 +30,8 @@ dependencies {
     compile 'com.google.firebase:firebase-ads:9.0.0'
     compile 'com.google.android.gms:play-services:9.0.0'
     compile project(':toastAnalyticsSDK')
+//    compile 'org.jsoup:jsoup:1.7.3'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

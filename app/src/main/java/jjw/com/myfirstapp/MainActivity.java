@@ -32,8 +32,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(jjw.com.myfirstapp.R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(jjw.com.myfirstapp.R.id.toolbar);
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         /**
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity
          * navigation
          */
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(jjw.com.myfirstapp.R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,23 +70,23 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(jjw.com.myfirstapp.R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, jjw.com.myfirstapp.R.string.navigation_drawer_open, jjw.com.myfirstapp.R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(jjw.com.myfirstapp.R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
 
         /**
          * Initialize the Mobile Ads SDK.
          */
-        // first
-//        MobileAds.initialize(this, "ca-app-pub-7255673243724911~4319766789");
         // sample ads
 //        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+        // first
+//        MobileAds.initialize(this, "ca-app-pub-7255673243724911~4319766789");
 
         // firstapp
         MobileAds.initialize(this, "ca-app-pub-7255673243724911~1925665981");
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity
 
         // Gets the ad view defined in layout/ad_fragment.xml with ad unit ID set in
         // values/strings.xml.
-        mAdView = (AdView) findViewById(jjw.com.myfirstapp.R.id.ad_view);
+        mAdView = (AdView) findViewById(R.id.ad_view);
 
         // Create an ad request. Check your logcat output for the hashed device ID to
         // get test ads on a physical device. e.g.
@@ -117,9 +117,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
 
-        Snackbar.make(findViewById(jjw.com.myfirstapp.R.id.drawer_layout), "onBackPressed", Snackbar.LENGTH_LONG)
+        Snackbar.make(findViewById(R.id.drawer_layout), "onBackPressed", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
-        DrawerLayout drawer = (DrawerLayout) findViewById(jjw.com.myfirstapp.R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(jjw.com.myfirstapp.R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == jjw.com.myfirstapp.R.id.action_settings) {
+        if (id == R.id.action_settings) {
             return true;
         }
 
@@ -155,13 +155,13 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == jjw.com.myfirstapp.R.id.nav_camera) {
+        if (id == R.id.nav_camera) {
             // in first, you should declare this activity in Androidmanifest.xml
 //            Intent goPicture = new Intent(this, PictureListActivity.class);
 //
 //            startActivity(goPicture);
 
-            Snackbar.make(findViewById(jjw.com.myfirstapp.R.id.drawer_layout), "기획중입니다.", Snackbar.LENGTH_SHORT)
+            Snackbar.make(findViewById(R.id.drawer_layout), "기획중입니다.", Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
             // Handle the camera action
         }
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity
 //
 //        }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(jjw.com.myfirstapp.R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentInteraction(ImageContent.OneImageItem item) {
-        Snackbar.make(findViewById(jjw.com.myfirstapp.R.id.drawer_layout), "onListFragmentInteraction", Snackbar.LENGTH_LONG)
+        Snackbar.make(findViewById(R.id.drawer_layout), "onListFragmentInteraction", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
     }
 
