@@ -83,9 +83,14 @@ public class MainActivity extends AppCompatActivity
         /**
          * Initialize the Mobile Ads SDK.
          */
-        MobileAds.initialize(this, "ca-app-pub-7255673243724911~4319766789");
-
+        // first
+//        MobileAds.initialize(this, "ca-app-pub-7255673243724911~4319766789");
+        // sample ads
 //        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+
+        // firstapp
+        MobileAds.initialize(this, "ca-app-pub-7255673243724911~1925665981");
+
 
         // Gets the ad view defined in layout/ad_fragment.xml with ad unit ID set in
         // values/strings.xml.
