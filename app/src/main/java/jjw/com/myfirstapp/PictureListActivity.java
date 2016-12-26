@@ -1,4 +1,4 @@
-package jjw.com.mytest;
+package jjw.com.myfirstapp;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import jjw.com.fragment.dummy.DummyContent;
 import jjw.com.fragment.model.ImageContent;
-import jjw.com.mytest.R;
+import jjw.com.myfirstapp.R;
 
 /**
  * A fragment representing a list of Items.

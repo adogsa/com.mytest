@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.bumptech.glide.load.model.GlideUrl;
 
 import jjw.com.fragment.ItemFragment.OnListFragmentInteractionListener;
-import jjw.com.mytest.R;
+import jjw.com.myfirstapp.R;
 import jjw.com.fragment.dummy.DummyContent.DummyItem;
 
 import java.util.List;

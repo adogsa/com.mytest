@@ -15,7 +15,7 @@ import java.util.List;
 
 import jjw.com.fragment.ItemFragment.OnListFragmentInteractionListener;
 import jjw.com.fragment.model.ImageContent;
-import jjw.com.mytest.R;
+import jjw.com.myfirstapp.R;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link ImageContent.OneImageItem} and makes a call to the

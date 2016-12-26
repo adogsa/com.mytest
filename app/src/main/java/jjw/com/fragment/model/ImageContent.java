@@ -20,7 +20,7 @@ import java.util.Map;
 import jjw.com.fragment.ItemFragment;
 import jjw.com.fragment.MyImgItemRecyclerViewAdapter;
 import jjw.com.fragment.MyItemRecyclerViewAdapter;
-import jjw.com.mytest.R;
+import jjw.com.myfirstapp.R;
 import jjw.com.utill.LoadJSONUtil;
 
 /**

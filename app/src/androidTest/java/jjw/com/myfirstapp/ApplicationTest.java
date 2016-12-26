@@ -1,4 +1,4 @@
-package jjw.com.mytest;
+package jjw.com.myfirstapp;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
