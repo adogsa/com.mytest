@@ -10,12 +10,15 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.toast.android.analytics.common.utils.StringUtil;
+import com.toast.android.analytics.common.utils.WebUtil;
 
 import java.util.List;
 
 import jjw.com.fragment.ItemFragment.OnListFragmentInteractionListener;
 import jjw.com.fragment.model.ImageContent;
 import jjw.com.myfirstapp.R;
+
+import static android.media.CamcorderProfile.get;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link ImageContent.OneImageItem} and makes a call to the
@@ -48,12 +51,12 @@ public class MyImgItemRecyclerViewAdapter extends RecyclerView.Adapter<MyImgItem
     public void onBindViewHolder(final ViewHolder holder, int position) {
         System.out.println(TAG + " jjw onBindViewHolder position " + position);
 
-        holder.mItem = mValues.get(position);
-        holder.mTitleView.setText(mValues.get(position).title);
-        holder.mDateTakenView.setText(mValues.get(position).date_taken);
-        String one_img_url = mValues.get(position).img_url;
-        holder.mImgUrlView.setText(one_img_url);
-        holder.mImgSizeView.setText(mValues.get(position).getImg_size());
+        final ImageContent.OneImageItem oneImgObj = mValues.get(position);
+
+        holder.mItem = oneImgObj;
+        holder.mTitleView.setText(oneImgObj.title);
+        String one_img_url = oneImgObj.img_url;
+//        holder.mImgUrlView.setText(one_img_url);
 
         if(StringUtil.isEmpty(one_img_url) == false){
             // 이미지 표현
@@ -69,6 +72,7 @@ public class MyImgItemRecyclerViewAdapter extends RecyclerView.Adapter<MyImgItem
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
@@ -86,9 +90,7 @@ public class MyImgItemRecyclerViewAdapter extends RecyclerView.Adapter<MyImgItem
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mTitleView;
-        public final TextView mDateTakenView;
-        public final TextView mImgUrlView;
-        public final TextView mImgSizeView;
+//        public final TextView mImgUrlView;
         public final ImageView mOneImgView;
 
         public ImageContent.OneImageItem mItem;
@@ -97,15 +99,13 @@ public class MyImgItemRecyclerViewAdapter extends RecyclerView.Adapter<MyImgItem
             super(view);
             mView = view;
             mTitleView = (TextView) view.findViewById(R.id.title);
-            mDateTakenView = (TextView) view.findViewById(R.id.date_taken);
-            mImgUrlView = (TextView) view.findViewById(R.id.img_url);
+//            mImgUrlView = (TextView) view.findViewById(R.id.img_url);
             mOneImgView = (ImageView) view.findViewById(R.id.oneimage);
-            mImgSizeView = (TextView) view.findViewById(R.id.image_size);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + " title : " + mTitleView + " content : " + mDateTakenView.getText() + "'";
+            return super.toString() + " '" + " title : " + mTitleView + "'";
         }
     }
 

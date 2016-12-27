@@ -1,6 +1,7 @@
 package jjw.com.utill;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,6 +16,8 @@ import java.net.URL;
  * Created by JJW on 2016-10-26.
  */
 public class LoadJSONUtil extends AsyncTask<String, Void, String> {
+    private static String TAG = LoadJSONUtil.class.getSimpleName();
+
     public LoadJSONUtil(Listener listener) {
 
         mListener = listener;
@@ -57,7 +60,7 @@ public class LoadJSONUtil extends AsyncTask<String, Void, String> {
 
     private String loadJSON(String jsonURL) throws IOException {
 
-        System.out.println("jjw loadJSON ");
+        Log.d(TAG, "jjw loadJSON : " + jsonURL);
         URL url = new URL(jsonURL);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setReadTimeout(10000);
@@ -76,7 +79,7 @@ public class LoadJSONUtil extends AsyncTask<String, Void, String> {
         }
 
         in.close();
-        System.out.println("jjw response.toString() " + response.toString());
+        Log.d(TAG, "jjw response.toString() " + response.toString());
         return response.toString();
     }
 

@@ -18,6 +18,8 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.toast.android.analytics.GameAnalytics;
+import com.toast.android.analytics.common.utils.NetworkUtil;
+import com.toast.android.analytics.common.utils.WebUtil;
 import com.toast.android.analytics.googleplayservices.GooglePlayServicesManager;
 
 import jjw.com.fragment.ItemFragment;
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity
         /**
          * toast cloud initialization
          */
-        GameAnalytics.setDebugMode(true); // for debug
+        GameAnalytics.setDebugMode(false); // for debug
 
         int result = GameAnalytics.initializeSdk(getApplicationContext(), "8defe998920007c5d5f7b7f50ddc7865ebce8e5231c8918bccd5022bcf8430d3", "R0YnoB8b", "AppVersion", true);
 
@@ -200,6 +202,8 @@ public class MainActivity extends AppCompatActivity
     public void onListFragmentInteraction(ImageContent.OneImageItem item) {
         Snackbar.make(findViewById(R.id.drawer_layout), "onListFragmentInteraction", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
+
+        WebUtil.openUrl(this, item.web_link);
     }
 
 

@@ -3,8 +3,10 @@ package jjw.com.fragment.model;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
+import com.toast.android.analytics.GameAnalytics;
 import com.toast.android.analytics.common.utils.JsonUtils;
 import com.toast.android.analytics.common.utils.StringUtil;
 
@@ -31,24 +33,40 @@ import jjw.com.utill.LoadJSONUtil;
  */
 public class ImageContent {
 
+    private String TAG = ImageContent.class.getSimpleName();
     /**
      * An array of sample (dummy) items.
      */
-    public static final List<OneImageItem> ITEMS = new ArrayList<OneImageItem>();
-
-    /**
-     * A map of sample (dummy) items, by ID.
-     */
-    public static final Map<String, OneImageItem> ITEM_MAP = new HashMap<String, OneImageItem>();
+    public static List<OneImageItem> ITEMS = new ArrayList<OneImageItem>();
 
     private static ItemFragment.OnListFragmentInteractionListener  mListClickListener;
-    private String JSON_URL = "http://demo2587971.mockable.io/images";
+    private String JSON_URL = "http://api-lnc.cloud.toast.com/launching/v2/application/zBi2sUGPkSgbB0Hh/launching";
+//    private String JSON_URL = "http://demo2587971.mockable.io/images";        // coupang
     private static View mView;
+    private ImageContentDB mDb;
+    private String mRecentVer = "";
 
     public void makeList(String jsonUrl, View view, ItemFragment.OnListFragmentInteractionListener listener){
+        Log.d(TAG,"jjw makeList");
+
         mView = view;
         mListClickListener = listener;
-        new LoadJSONUtil(new onLoadJsonDataListener()).execute(JSON_URL);
+        if(ITEMS.size() == 0){
+
+
+//            if(ShouldUpdate() == true){
+                Log.d(TAG,"jjw makeList call json");
+
+                new LoadJSONUtil(new onLoadJsonDataListener()).execute(JSON_URL);
+//            } else {
+//                mDb = new ImageContentDB(mView.getContext());
+//                ITEMS = mDb.getImgContentList("","");
+//                showItemListInView();
+//            }
+
+        } else {
+            showItemListInView();
+        }
     }
 
 
@@ -58,55 +76,77 @@ public class ImageContent {
     public static class OneImageItem {
         public final String title;
         public final String img_url;
-        public final String img_size_width;
-        public final String img_size_height;
-        public final String date_taken;
+        public final String web_link;
 
-        public OneImageItem(String title, String img_url, String img_size_height, String img_size_width, String date_taken) {
+        public OneImageItem(String title, String img_url, String web_link) {
             this.title = title;
             this.img_url = img_url;
-            this.img_size_width = img_size_width;
-            this.img_size_height = img_size_height;
-            this.date_taken = date_taken;
-        }
-
-        public String getImg_size(){
-            if(StringUtil.isEmpty(img_size_height) == true){
-                return "";
-            } else {
-                return img_size_width + " X " + img_size_height;
-            }
+            this.web_link = web_link;
         }
 
         @Override
         public String toString() {
-            return title + "_" + img_url;
+            return " title:" + title + "\n img:" + img_url + "\n" +
+                    " web:" + web_link;
         }
     }
 
+
+    // cook
     private class onLoadJsonDataListener implements LoadJSONUtil.Listener {
 
         @Override
         public void onLoaded(String jsonData) {
 
             try {
+                GameAnalytics.traceEvent("NETWORK", "launching_code", "MakeData", GameAnalytics.getVersion(), 1, 10);
+
                 JSONObject json = new JSONObject(jsonData);
+                JSONObject vodUrlObj = json.getJSONObject("launching").getJSONObject("vodUrl");
 
-                JSONArray jArray = json.getJSONArray("photos");
+//                LoadJSONUtil.getJsonValue(vodUrlObj, "version")
 
-                for(int index = 0; index < jArray.length(); index++){
-                    JSONObject json_data = jArray.getJSONObject(index);
+
+//                mDb = new ImageContentDB(mView.getContext());
+//                ITEMS = mDb.getImgContentList("","");
+//                showItemListInView();
+
+
+
+
+                for(int index = 0; index < 3; index++){
+                    JSONObject oneItem = vodUrlObj.getJSONObject("item" + index);
 
                     OneImageItem data = new OneImageItem(
-                            LoadJSONUtil.getJsonValue(json_data, "title")
-                            , LoadJSONUtil.getJsonValue(json_data, "url")
-                            , LoadJSONUtil.getJsonValue(json_data, "width")
-                            , LoadJSONUtil.getJsonValue(json_data, "height")
-                            , LoadJSONUtil.getJsonValue(json_data, "date_taken")
+                        LoadJSONUtil.getJsonValue(oneItem, "title"),
+                        LoadJSONUtil.getJsonValue(oneItem, "imgUrl"),
+                        LoadJSONUtil.getJsonValue(oneItem, "webLink")
                     );
+
+                    // save in DB
+//                    mDb.addImgContent(data);
 
                     ITEMS.add(data);
                 }
+
+
+
+
+//                JSONArray jArray = json.getJSONArray("photos");
+//
+//                for(int index = 0; index < jArray.length(); index++){
+//                    JSONObject json_data = jArray.getJSONObject(index);
+//
+//                    OneImageItem data = new OneImageItem(
+//                            LoadJSONUtil.getJsonValue(json_data, "title")
+//                            , LoadJSONUtil.getJsonValue(json_data, "url")
+//                            , LoadJSONUtil.getJsonValue(json_data, "width")
+//                            , LoadJSONUtil.getJsonValue(json_data, "height")
+//                            , LoadJSONUtil.getJsonValue(json_data, "date_taken")
+//                    );
+//
+//                    ITEMS.add(data);
+//                }
 
                 // Set the adapter
                 if (mView instanceof RecyclerView) {
@@ -115,6 +155,7 @@ public class ImageContent {
                     recyclerView.setLayoutManager(new LinearLayoutManager(context));
                     recyclerView.setAdapter(new MyImgItemRecyclerViewAdapter(ITEMS, mListClickListener));
                 }
+
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -126,4 +167,67 @@ public class ImageContent {
 
         }
     }
+
+
+    public void showItemListInView(){
+        // Set the adapter
+        if (mView instanceof RecyclerView) {
+            Context context = mView.getContext();
+            RecyclerView recyclerView = (RecyclerView) mView;
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            recyclerView.setAdapter(new MyImgItemRecyclerViewAdapter(ITEMS, mListClickListener));
+        }
+    }
+
+    private boolean ShouldUpdate(){
+
+
+
+        return true;
+    }
+
+
+    // coupang list
+//    private class onLoadJsonDataListener implements LoadJSONUtil.Listener {
+//
+//        @Override
+//        public void onLoaded(String jsonData) {
+//
+//            try {
+//                JSONObject json = new JSONObject(jsonData);
+//
+//                JSONArray jArray = json.getJSONArray("photos");
+//
+//                for(int index = 0; index < jArray.length(); index++){
+//                    JSONObject json_data = jArray.getJSONObject(index);
+//
+//                    OneImageItem data = new OneImageItem(
+//                            LoadJSONUtil.getJsonValue(json_data, "title")
+//                            , LoadJSONUtil.getJsonValue(json_data, "url")
+//                            , LoadJSONUtil.getJsonValue(json_data, "width")
+//                            , LoadJSONUtil.getJsonValue(json_data, "height")
+//                            , LoadJSONUtil.getJsonValue(json_data, "date_taken")
+//                    );
+//
+//                    ITEMS.add(data);
+//                }
+//
+//                // Set the adapter
+//                if (mView instanceof RecyclerView) {
+//                    Context context = mView.getContext();
+//                    RecyclerView recyclerView = (RecyclerView) mView;
+//                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
+//                    recyclerView.setAdapter(new MyImgItemRecyclerViewAdapter(ITEMS, mListClickListener));
+//                }
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        @Override
+//        public void onError() {
+//
+//        }
+//    }
 }
