@@ -15,6 +15,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,7 @@ import jjw.com.fragment.MyImgItemRecyclerViewAdapter;
 import jjw.com.fragment.MyItemRecyclerViewAdapter;
 import jjw.com.myfirstapp.R;
 import jjw.com.utill.LoadJSONUtil;
+import jjw.com.utill.TimeUtil;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -34,6 +37,7 @@ import jjw.com.utill.LoadJSONUtil;
 public class ImageContent {
 
     private String TAG = ImageContent.class.getSimpleName();
+
     /**
      * An array of sample (dummy) items.
      */
@@ -44,6 +48,7 @@ public class ImageContent {
 //    private String JSON_URL = "http://demo2587971.mockable.io/images";        // coupang
     private static View mView;
     private ImageContentDB mDb;
+    private long mLastUserUpdateTime = 0;
     private String mRecentVer = "";
 
     public void makeList(String jsonUrl, View view, ItemFragment.OnListFragmentInteractionListener listener){
@@ -51,17 +56,28 @@ public class ImageContent {
 
         mView = view;
         mListClickListener = listener;
+        try{
+            mDb = new ImageContentDB(mView.getContext());
+            mDb.getWritableDatabase();
+
+        } catch (Exception e){
+            System.err.print("jjw error : " + e.getMessage());
+            mDb.close();
+        }
+
         if(ITEMS.size() == 0){
 
 
-//            if(ShouldUpdate() == true){
-                Log.d(TAG,"jjw makeList call json");
-
-                new LoadJSONUtil(new onLoadJsonDataListener()).execute(JSON_URL);
+//            if(CheckShouldUpdate() == true){
+//                Log.d(TAG,"jjw makeList call json");
+//
+//                new LoadJSONUtil(new onLoadJsonDataListener()).execute(JSON_URL);
 //            } else {
-//                mDb = new ImageContentDB(mView.getContext());
-//                ITEMS = mDb.getImgContentList("","");
-//                showItemListInView();
+
+            mDb.addImgContent(new OneImageItem("jjwTitle","jjwImg","jjwLink"));
+
+                ITEMS = mDb.getImgContentList("","");
+                showItemListInView();
 //            }
 
         } else {
@@ -124,41 +140,20 @@ public class ImageContent {
                     );
 
                     // save in DB
-//                    mDb.addImgContent(data);
+                    mDb.addImgContent(data);
 
                     ITEMS.add(data);
                 }
 
+                // save update time
+                saveLastUpdateMilliTime(TimeUtil.getTodayMilli());
 
-
-
-//                JSONArray jArray = json.getJSONArray("photos");
-//
-//                for(int index = 0; index < jArray.length(); index++){
-//                    JSONObject json_data = jArray.getJSONObject(index);
-//
-//                    OneImageItem data = new OneImageItem(
-//                            LoadJSONUtil.getJsonValue(json_data, "title")
-//                            , LoadJSONUtil.getJsonValue(json_data, "url")
-//                            , LoadJSONUtil.getJsonValue(json_data, "width")
-//                            , LoadJSONUtil.getJsonValue(json_data, "height")
-//                            , LoadJSONUtil.getJsonValue(json_data, "date_taken")
-//                    );
-//
-//                    ITEMS.add(data);
-//                }
-
-                // Set the adapter
-                if (mView instanceof RecyclerView) {
-                    Context context = mView.getContext();
-                    RecyclerView recyclerView = (RecyclerView) mView;
-                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                    recyclerView.setAdapter(new MyImgItemRecyclerViewAdapter(ITEMS, mListClickListener));
-                }
-
+                // Set List adapter
+                showItemListInView();
 
             } catch (JSONException e) {
                 e.printStackTrace();
+                saveLastUpdateMilliTime(1);
             }
         }
 
@@ -170,7 +165,7 @@ public class ImageContent {
 
 
     public void showItemListInView(){
-        // Set the adapter
+        // Set List adapter
         if (mView instanceof RecyclerView) {
             Context context = mView.getContext();
             RecyclerView recyclerView = (RecyclerView) mView;
@@ -179,55 +174,40 @@ public class ImageContent {
         }
     }
 
-    private boolean ShouldUpdate(){
+    private boolean CheckShouldUpdate(){
+        Log.d(TAG, "CheckShouldUpdate");
+
+        // when server update data
+        Calendar timeOfServerUpdate= Calendar.getInstance ( );
+        timeOfServerUpdate = TimeUtil.getLastDayOfWeek(timeOfServerUpdate, Calendar.WEDNESDAY);
+        Log.d(TAG, "jjw  calendar cal :" + timeOfServerUpdate.getTime());
 
 
+        // when user update
+        Calendar timeOfUserUpdate= Calendar.getInstance ( );
+        timeOfUserUpdate.setTime(new Date(getLastUpdateMilliTime())); ;
+        Log.d(TAG, "jjw  calendar cal2 :" + timeOfUserUpdate.getTime());
 
-        return true;
+        Log.d(TAG, "jjw  calendar cal cal2 :" + timeOfServerUpdate.compareTo(timeOfUserUpdate));
+
+
+        return (timeOfServerUpdate.compareTo(timeOfUserUpdate)) > 0;
     }
 
+    private long getLastUpdateMilliTime(){
 
-    // coupang list
-//    private class onLoadJsonDataListener implements LoadJSONUtil.Listener {
-//
-//        @Override
-//        public void onLoaded(String jsonData) {
-//
-//            try {
-//                JSONObject json = new JSONObject(jsonData);
-//
-//                JSONArray jArray = json.getJSONArray("photos");
-//
-//                for(int index = 0; index < jArray.length(); index++){
-//                    JSONObject json_data = jArray.getJSONObject(index);
-//
-//                    OneImageItem data = new OneImageItem(
-//                            LoadJSONUtil.getJsonValue(json_data, "title")
-//                            , LoadJSONUtil.getJsonValue(json_data, "url")
-//                            , LoadJSONUtil.getJsonValue(json_data, "width")
-//                            , LoadJSONUtil.getJsonValue(json_data, "height")
-//                            , LoadJSONUtil.getJsonValue(json_data, "date_taken")
-//                    );
-//
-//                    ITEMS.add(data);
-//                }
-//
-//                // Set the adapter
-//                if (mView instanceof RecyclerView) {
-//                    Context context = mView.getContext();
-//                    RecyclerView recyclerView = (RecyclerView) mView;
-//                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
-//                    recyclerView.setAdapter(new MyImgItemRecyclerViewAdapter(ITEMS, mListClickListener));
-//                }
-//
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        @Override
-//        public void onError() {
-//
-//        }
-//    }
+        mLastUserUpdateTime = mDb.getLastUpdateMilliTime();
+
+        return mLastUserUpdateTime;
+    }
+
+    private void saveLastUpdateMilliTime(long updateTime){
+
+        if(mLastUserUpdateTime == 0){
+            mDb.addLastUpdateMilliTime(updateTime);
+        } else {
+            mDb.updateLastUpdateMilliTime(updateTime);
+        }
+    }
+
 }

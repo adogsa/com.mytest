@@ -25,37 +25,40 @@ import java.util.TimeZone;
 
 
 public class ImageContentDB extends SQLiteOpenHelper {
-    private static final String TAG = "ImageContentSQLHelper";
+    private static final String TAG = "ImageContentDB";
     private static final String DATABASE_NAME = "IMAGE_DATA.db";
     private static final int DATABASE_VERSION = 1;
-    SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final String KEY_ID = "key";
     private static final String KEY_RESOURCE = "resource";
     private static final String KEY_EXPIRE = "expire";
 
     @SuppressLint({"SimpleDateFormat"})
     public ImageContentDB(Context applicationContext) {
-        super(applicationContext, "IMAGE_DATA.db", (SQLiteDatabase.CursorFactory)null, 1);
-        this.mFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+            super(applicationContext, "IMAGE_DATA.db", (SQLiteDatabase.CursorFactory)null, 1);
+        Log.d(TAG, "ImageContentDB");
     }
 
+    @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        Log.d(TAG, "jjw onCreate");
+        System.out.println("jjw ImageContentDB oncreate");
         String CREATE_IMGCONTENT_CACHE_TABLE = "CREATE TABLE IF NOT EXISTS ImageContentCache" +
                 "(seq INTEGER PRIMARY KEY AUTOINCREMENT" +
                 ", web_link TEXT" +
                 ", img_url TEXT" +
                 ", title TEXT )";
-//        String CREATE_CHECKUPDATE_CACHE_TABLE = "CREATE TABLE IF NOT EXISTS CheckUpdateCache(seq_id INTEGER PRIMARY KEY AUTOINCREMENT, promotion_id INTEGER NOT NULL, json TEXT NOT NULL, expire DATE)";
+//        String CREATE_CHECKUPDATE_CACHE_TABLE = "CREATE TABLE IF NOT EXISTS CheckUpdateCache(update_time TEXT NULL)";
 //        String CREATE_PROMOTION_VISIVILITY_TABLE = " create table if not exists promotion_visivility  ( adspace_name text not null primary key,    visible_type text not null,    regdate      datetime not null default CURRENT_TIMESTAMP )";
         sqLiteDatabase.execSQL(CREATE_IMGCONTENT_CACHE_TABLE);
 //        sqLiteDatabase.execSQL(CREATE_CHECKUPDATE_CACHE_TABLE);
 //        sqLiteDatabase.execSQL(CREATE_PROMOTION_VISIVILITY_TABLE);
     }
 
+    @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int arg1, int arg2) {
-        String DROP_TABLE_IF_IMGCONTENT_CACHE_EXIST = "DROP TABLE IF EXSITS ImageContentCache";
-//        String DROP_TABLE_IF_CHECKUPDATE_CACHE_EXIST = "DROP TABLE IF EXSITS CheckUpdateCache";
-//        String DROP_PROMOTION_VISIVILITY_TABLE = "DROP TABLE IF EXSITS promotion_visivility";
+        String DROP_TABLE_IF_IMGCONTENT_CACHE_EXIST = "DROP TABLE IF EXISTS ImageContentCache";
+//        String DROP_TABLE_IF_CHECKUPDATE_CACHE_EXIST = "DROP TABLE IF EXISTS CheckUpdateCache";
+//        String DROP_PROMOTION_VISIVILITY_TABLE = "DROP TABLE IF EXISTS promotion_visivility";
         sqLiteDatabase.execSQL(DROP_TABLE_IF_IMGCONTENT_CACHE_EXIST);
 //        sqLiteDatabase.execSQL(DROP_TABLE_IF_CHECKUPDATE_CACHE_EXIST);
 //        sqLiteDatabase.execSQL(DROP_PROMOTION_VISIVILITY_TABLE);
@@ -102,6 +105,12 @@ public class ImageContentDB extends SQLiteOpenHelper {
 
     }
 
+    /**
+     *
+     * @param column : title, web_link, img_url
+     * @param keyword
+     * @return
+     */
     public List<ImageContent.OneImageItem> getImgContentList(String column, String keyword) {
         Cursor cursor = null;
         SQLiteDatabase db = null;
@@ -117,11 +126,8 @@ public class ImageContentDB extends SQLiteOpenHelper {
             cursor = db.rawQuery(e, (String[])null);
 
             while(cursor.moveToNext()) {
-                StringBuffer buffer = new StringBuffer();
 
                 ImageContent.OneImageItem item = new ImageContent.OneImageItem(cursor.getString(1), cursor.getString(2), cursor.getString(3));
-
-                Log.d(TAG, "jjw : " + item.toString());
 
                 resultList.add(item);
             }
@@ -142,61 +148,21 @@ public class ImageContentDB extends SQLiteOpenHelper {
     }
 
 
-
-
-
-
-
-
-
-
-    public boolean isPromotionVisible(String adspaceName) {
-        Cursor cursor = null;
-        SQLiteDatabase db = null;
-        int count = 0;
-
-        try {
-            String e = " select count(1) FROM promotion_visivility  where adspace_name = \'" + adspaceName + "\' " + " and ( visible_type = \'INVISIBLE_FOREVER\' or " + "       (visible_type = \'INVISIBLE_24HR\' and regdate > datetime(\'now\', \'-1 day\'))  " + "     )";
-            db = this.getReadableDatabase();
-            cursor = db.rawQuery(e, (String[])null);
-            if(cursor != null && cursor.moveToFirst()) {
-                count = cursor.getInt(0);
-            }
-        } catch (Exception var9) {
-            Tracer.error("ImageContentSQLHelper", "@isPromotionVisible" + var9.getMessage());
-        } finally {
-            if(db != null) {
-                db.close();
-            }
-
-            if(cursor != null) {
-                cursor.close();
-            }
-
-        }
-
-        return count <= 0;
-    }
-
-    public List<String> getBlockedPromotionList() {
+    public long getLastUpdateMilliTime() {
         Cursor cursor = null;
         SQLiteDatabase db = null;
         ArrayList list = new ArrayList();
+        ArrayList<ImageContent.OneImageItem> resultList = new ArrayList<ImageContent.OneImageItem>();
 
         try {
-            String e = " select adspace_name, visible_type, regdate FROM promotion_visivility ";
+            String e = " select update_time FROM CheckUpdateCache ";
             db = this.getReadableDatabase();
             cursor = db.rawQuery(e, (String[])null);
 
-            while(cursor.moveToNext()) {
-                StringBuffer buffer = new StringBuffer();
-                buffer.append(cursor.getString(0)).append("+");
-                buffer.append(cursor.getString(1)).append("+");
-                buffer.append(cursor.getString(2));
-                list.add(buffer.toString());
-            }
-        } catch (Exception var9) {
-            Tracer.error("ImageContentSQLHelper", "@getBlockedPromotionList" + var9.getMessage());
+            return cursor.getLong(0);
+
+        } catch (Exception e) {
+            Tracer.error("CheckUpdateCacheSQLHelper", "@getLastUpdateMilliTime" + e.getMessage());
         } finally {
             if(db != null) {
                 db.close();
@@ -208,28 +174,52 @@ public class ImageContentDB extends SQLiteOpenHelper {
 
         }
 
-        return list;
+        return 0;
     }
 
-    public void cleanupExpiredResource() {
-        this.cleanupExpiredResourceCache();
-    }
 
-    private void cleanupExpiredResourceCache() {
+    public long addLastUpdateMilliTime(long updateTime) {
+
         SQLiteDatabase db = null;
-        Date currentDate = Calendar.getInstance().getTime();
+        long result = -1L;
 
         try {
             db = this.getWritableDatabase();
-            db.delete("ResourceCache", "expire < ?", new String[]{String.valueOf(this.mFormatter.format(currentDate))});
-        } catch (Exception var7) {
-            Tracer.error("ImageContentSQLHelper", var7.getMessage());
+            ContentValues e = new ContentValues();
+            e.put("update_time", updateTime);
+            result = db.insert("CheckUpdateCache", (String)null, e);
+        } catch (Exception e) {
+            Tracer.error("CheckUpdateCacheSQLHelper", "@addLastUpdateMilliTime" + e.getMessage());
         } finally {
-            if(db != null) {
+            if(db != null && db.isOpen()) {
                 db.close();
             }
 
         }
 
+        return result;
     }
+
+    public long updateLastUpdateMilliTime(long updateTime) {
+        SQLiteDatabase db = null;
+        long result = -1L;
+
+        try {
+            db = this.getWritableDatabase();
+            ContentValues e = new ContentValues();
+            e.put("update_time", updateTime);
+            result = db.update("CheckUpdateCache", e, null, null);
+        } catch (Exception e) {
+            Tracer.error("CheckUpdateCacheSQLHelper", "@addLastUpdateMilliTime" + e.getMessage());
+        } finally {
+            if(db != null && db.isOpen()) {
+                db.close();
+            }
+
+        }
+
+        return result;
+    }
+
+
 }
