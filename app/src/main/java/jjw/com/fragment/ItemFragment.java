@@ -2,12 +2,14 @@ package jjw.com.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import jjw.com.fragment.model.ImageContent;
 import jjw.com.myfirstapp.R;
@@ -62,14 +64,23 @@ public class ItemFragment extends Fragment {
                              Bundle savedInstanceState) {
         System.out.println(TAG + " jjw onCreateView  ");
 
-        View view = inflater.inflate(R.layout.fragment_item_list, container, false);
+        final View fr_view = inflater.inflate(R.layout.fragment_item_list, container, false);
 
-        ImageContent imgContentObj = new ImageContent();
-        imgContentObj.makeList("",view,mListener);
+        final ImageContent imgContentObj = new ImageContent();
+        imgContentObj.makeList("",  fr_view.findViewById(R.id.item_fr_list),  mListener);
 
-        return view;
+        fr_view.findViewById(R.id.search_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Snackbar.make(view, ((EditText)fr_view.findViewById(R.id.keyword)).getText().toString(), Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                imgContentObj.searchListWithKwd("title", ((EditText)fr_view.findViewById(R.id.keyword)).getText().toString());
+            }
+        });
+
+
+        return fr_view;
     }
-
 
     @Override
     public void onAttach(Context context) {

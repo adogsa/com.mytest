@@ -58,8 +58,6 @@ public class ImageContent {
         mListClickListener = listener;
         try{
             mDb = new ImageContentDB(mView.getContext());
-            mDb.getWritableDatabase();
-
         } catch (Exception e){
             System.err.print("jjw error : " + e.getMessage());
             mDb.close();
@@ -68,17 +66,19 @@ public class ImageContent {
         if(ITEMS.size() == 0){
 
 
-//            if(CheckShouldUpdate() == true){
-//                Log.d(TAG,"jjw makeList call json");
-//
-//                new LoadJSONUtil(new onLoadJsonDataListener()).execute(JSON_URL);
-//            } else {
+            if(CheckShouldUpdate() == true){
+                Log.d(TAG,"jjw makeList call json");
 
-            mDb.addImgContent(new OneImageItem("jjwTitle","jjwImg","jjwLink"));
+                new LoadJSONUtil(new onLoadJsonDataListener()).execute(JSON_URL);
+            } else {
 
                 ITEMS = mDb.getImgContentList("","");
-                showItemListInView();
-//            }
+                if(ITEMS.size() == 0){
+                    new LoadJSONUtil(new onLoadJsonDataListener()).execute(JSON_URL);
+                } else {
+                    showItemListInView();
+                }
+            }
 
         } else {
             showItemListInView();
@@ -119,18 +119,10 @@ public class ImageContent {
 
                 JSONObject json = new JSONObject(jsonData);
                 JSONObject vodUrlObj = json.getJSONObject("launching").getJSONObject("vodUrl");
+                int itemCount = Integer.valueOf(LoadJSONUtil.getJsonValue(vodUrlObj, "itemCount"));
+                boolean isContinueUpdate = "Y".equalsIgnoreCase(LoadJSONUtil.getJsonValue(json, "isContinueUpdate") );
 
-//                LoadJSONUtil.getJsonValue(vodUrlObj, "version")
-
-
-//                mDb = new ImageContentDB(mView.getContext());
-//                ITEMS = mDb.getImgContentList("","");
-//                showItemListInView();
-
-
-
-
-                for(int index = 0; index < 3; index++){
+                for(int index = 0; index < itemCount; index++){
                     JSONObject oneItem = vodUrlObj.getJSONObject("item" + index);
 
                     OneImageItem data = new OneImageItem(
@@ -139,14 +131,23 @@ public class ImageContent {
                         LoadJSONUtil.getJsonValue(oneItem, "webLink")
                     );
 
-                    // save in DB
-                    mDb.addImgContent(data);
+                    if(isContinueUpdate != true){
+                        Log.d(TAG,"save imgContent");
+                        // save in DB
+                        mDb.addImgContent(data);
+                    }
 
                     ITEMS.add(data);
                 }
 
-                // save update time
-                saveLastUpdateMilliTime(TimeUtil.getTodayMilli());
+                if(isContinueUpdate == true){
+                    mDb.deleteLastUpdateMilliTime();
+                    mDb.deleteImgContent();
+                } else {
+                    Log.d(TAG,"save milli time");
+                    // save update time
+                    saveLastUpdateMilliTime(TimeUtil.getTodayMilli());
+                }
 
                 // Set List adapter
                 showItemListInView();
@@ -171,7 +172,13 @@ public class ImageContent {
             RecyclerView recyclerView = (RecyclerView) mView;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
             recyclerView.setAdapter(new MyImgItemRecyclerViewAdapter(ITEMS, mListClickListener));
+            recyclerView.getAdapter().notifyDataSetChanged();
         }
+    }
+
+    public void searchListWithKwd(String column, String keyword){
+        ITEMS = mDb.getImgContentList(column, keyword);
+        showItemListInView();
     }
 
     private boolean CheckShouldUpdate(){
@@ -179,7 +186,7 @@ public class ImageContent {
 
         // when server update data
         Calendar timeOfServerUpdate= Calendar.getInstance ( );
-        timeOfServerUpdate = TimeUtil.getLastDayOfWeek(timeOfServerUpdate, Calendar.WEDNESDAY);
+        timeOfServerUpdate = TimeUtil.getLastDayOfWeek(timeOfServerUpdate, Calendar.THURSDAY);
         Log.d(TAG, "jjw  calendar cal :" + timeOfServerUpdate.getTime());
 
 

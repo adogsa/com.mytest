@@ -34,7 +34,7 @@ public class ImageContentDB extends SQLiteOpenHelper {
 
     @SuppressLint({"SimpleDateFormat"})
     public ImageContentDB(Context applicationContext) {
-            super(applicationContext, "IMAGE_DATA.db", (SQLiteDatabase.CursorFactory)null, 1);
+            super(applicationContext, "IMAGE_DATA.db", (SQLiteDatabase.CursorFactory)null, DATABASE_VERSION);
         Log.d(TAG, "ImageContentDB");
     }
 
@@ -47,20 +47,20 @@ public class ImageContentDB extends SQLiteOpenHelper {
                 ", web_link TEXT" +
                 ", img_url TEXT" +
                 ", title TEXT )";
-//        String CREATE_CHECKUPDATE_CACHE_TABLE = "CREATE TABLE IF NOT EXISTS CheckUpdateCache(update_time TEXT NULL)";
+        String CREATE_CHECKUPDATE_CACHE_TABLE = "CREATE TABLE IF NOT EXISTS CheckUpdateCache(update_time LONG NULL)";
 //        String CREATE_PROMOTION_VISIVILITY_TABLE = " create table if not exists promotion_visivility  ( adspace_name text not null primary key,    visible_type text not null,    regdate      datetime not null default CURRENT_TIMESTAMP )";
         sqLiteDatabase.execSQL(CREATE_IMGCONTENT_CACHE_TABLE);
-//        sqLiteDatabase.execSQL(CREATE_CHECKUPDATE_CACHE_TABLE);
+        sqLiteDatabase.execSQL(CREATE_CHECKUPDATE_CACHE_TABLE);
 //        sqLiteDatabase.execSQL(CREATE_PROMOTION_VISIVILITY_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int arg1, int arg2) {
         String DROP_TABLE_IF_IMGCONTENT_CACHE_EXIST = "DROP TABLE IF EXISTS ImageContentCache";
-//        String DROP_TABLE_IF_CHECKUPDATE_CACHE_EXIST = "DROP TABLE IF EXISTS CheckUpdateCache";
+        String DROP_TABLE_IF_CHECKUPDATE_CACHE_EXIST = "DROP TABLE IF EXISTS CheckUpdateCache";
 //        String DROP_PROMOTION_VISIVILITY_TABLE = "DROP TABLE IF EXISTS promotion_visivility";
         sqLiteDatabase.execSQL(DROP_TABLE_IF_IMGCONTENT_CACHE_EXIST);
-//        sqLiteDatabase.execSQL(DROP_TABLE_IF_CHECKUPDATE_CACHE_EXIST);
+        sqLiteDatabase.execSQL(DROP_TABLE_IF_CHECKUPDATE_CACHE_EXIST);
 //        sqLiteDatabase.execSQL(DROP_PROMOTION_VISIVILITY_TABLE);
         this.onCreate(sqLiteDatabase);
     }
@@ -78,6 +78,7 @@ public class ImageContentDB extends SQLiteOpenHelper {
             result = db.insert("ImageContentCache", (String)null, e);
         } catch (Exception e) {
             Tracer.error("ImageContentSQLHelper", "@addImgContent" + e.getMessage());
+            Log.e(TAG, e.getMessage());
         } finally {
             if(db != null && db.isOpen()) {
                 db.close();
@@ -88,14 +89,15 @@ public class ImageContentDB extends SQLiteOpenHelper {
         return result;
     }
 
-    public void deleteImgContent(String seq) {
+    public void deleteImgContent() {
         SQLiteDatabase db = null;
 
         try {
             db = this.getWritableDatabase();
-            db.delete("ImageContentCache", "seq = ?", new String[]{seq});
+            db.delete("ImageContentCache", null, null);
         } catch (Exception e) {
             Tracer.error("ImageContentSQLHelper", "@deleteImgContent" + e.getMessage());
+            Log.e(TAG, e.getMessage());
         } finally {
             if(db != null) {
                 db.close();
@@ -118,12 +120,14 @@ public class ImageContentDB extends SQLiteOpenHelper {
         ArrayList<ImageContent.OneImageItem> resultList = new ArrayList<ImageContent.OneImageItem>();
 
         try {
-            String e = " select seq, title, img_url, web_link FROM ImageContentCache ";
+            String sqlquery = " select seq, title, img_url, web_link FROM ImageContentCache ";
             if(StringUtil.isEmpty(keyword) != true){
-                e = e + "where " + column + " = " + keyword;
+                sqlquery = sqlquery + "where " + column + " like '%" + keyword + "%'";
             }
+            Log.d(TAG, sqlquery);
+
             db = this.getReadableDatabase();
-            cursor = db.rawQuery(e, (String[])null);
+            cursor = db.rawQuery(sqlquery, (String[])null);
 
             while(cursor.moveToNext()) {
 
@@ -133,6 +137,7 @@ public class ImageContentDB extends SQLiteOpenHelper {
             }
         } catch (Exception e) {
             Tracer.error("ImageContentSQLHelper", "@getImgContentList" + e.getMessage());
+            Log.e(TAG, e.getMessage());
         } finally {
             if(db != null) {
                 db.close();
@@ -158,11 +163,13 @@ public class ImageContentDB extends SQLiteOpenHelper {
             String e = " select update_time FROM CheckUpdateCache ";
             db = this.getReadableDatabase();
             cursor = db.rawQuery(e, (String[])null);
+            cursor.moveToLast();
 
             return cursor.getLong(0);
 
         } catch (Exception e) {
             Tracer.error("CheckUpdateCacheSQLHelper", "@getLastUpdateMilliTime" + e.getMessage());
+            Log.e(TAG, e.getMessage());
         } finally {
             if(db != null) {
                 db.close();
@@ -190,6 +197,7 @@ public class ImageContentDB extends SQLiteOpenHelper {
             result = db.insert("CheckUpdateCache", (String)null, e);
         } catch (Exception e) {
             Tracer.error("CheckUpdateCacheSQLHelper", "@addLastUpdateMilliTime" + e.getMessage());
+            Log.e(TAG, e.getMessage());
         } finally {
             if(db != null && db.isOpen()) {
                 db.close();
@@ -211,6 +219,7 @@ public class ImageContentDB extends SQLiteOpenHelper {
             result = db.update("CheckUpdateCache", e, null, null);
         } catch (Exception e) {
             Tracer.error("CheckUpdateCacheSQLHelper", "@addLastUpdateMilliTime" + e.getMessage());
+            Log.e(TAG, e.getMessage());
         } finally {
             if(db != null && db.isOpen()) {
                 db.close();
@@ -219,6 +228,23 @@ public class ImageContentDB extends SQLiteOpenHelper {
         }
 
         return result;
+    }
+
+    public void deleteLastUpdateMilliTime() {
+        SQLiteDatabase db = null;
+
+        try {
+            db = this.getWritableDatabase();
+            db.delete("CheckUpdateCache", null, null);
+        } catch (Exception e) {
+            Tracer.error("CheckUpdateCacheSQLHelper", "@deleteLastUpdateMilliTime" + e.getMessage());
+            Log.e(TAG, e.getMessage());
+        } finally {
+            if(db != null) {
+                db.close();
+            }
+
+        }
     }
 
 
