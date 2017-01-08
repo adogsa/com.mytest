@@ -65,6 +65,7 @@ public class ImageContent {
 
         if(ITEMS.size() == 0){
 
+            ITEMS = mDb.getImgContentList("","");
 
             if(CheckShouldUpdate() == true){
                 Log.d(TAG,"jjw makeList call json");
@@ -72,7 +73,6 @@ public class ImageContent {
                 new LoadJSONUtil(new onLoadJsonDataListener()).execute(JSON_URL);
             } else {
 
-                ITEMS = mDb.getImgContentList("","");
                 if(ITEMS.size() == 0){
                     new LoadJSONUtil(new onLoadJsonDataListener()).execute(JSON_URL);
                 } else {
@@ -120,7 +120,20 @@ public class ImageContent {
                 JSONObject json = new JSONObject(jsonData);
                 JSONObject vodUrlObj = json.getJSONObject("launching").getJSONObject("vodUrl");
                 int itemCount = Integer.valueOf(LoadJSONUtil.getJsonValue(vodUrlObj, "itemCount"));
-                boolean isContinueUpdate = "Y".equalsIgnoreCase(LoadJSONUtil.getJsonValue(json, "isContinueUpdate") );
+                boolean isContinueUpdate = "Y".equalsIgnoreCase(LoadJSONUtil.getJsonValue(vodUrlObj, "isContinueUpdate") );
+                boolean isEnforceDb = "Y".equalsIgnoreCase(LoadJSONUtil.getJsonValue(vodUrlObj, "isEnforceDb") );
+
+                // if isEnforceDb is Y and
+                if(isEnforceDb == true && ITEMS.size() != 0){
+
+                    // Set List adapter
+                    showItemListInView();
+
+                    return;
+                }
+
+                // take care of update time
+                mDb.deleteImgContent();
 
                 for(int index = 0; index < itemCount; index++){
                     JSONObject oneItem = vodUrlObj.getJSONObject("item" + index);
@@ -131,19 +144,17 @@ public class ImageContent {
                         LoadJSONUtil.getJsonValue(oneItem, "webLink")
                     );
 
-                    if(isContinueUpdate != true){
-                        Log.d(TAG,"save imgContent");
-                        // save in DB
-                        mDb.addImgContent(data);
-                    }
+                    Log.d(TAG,"save imgContent");
+                    // save in DB
+                    mDb.addImgContent(data);
 
                     ITEMS.add(data);
                 }
 
-                if(isContinueUpdate == true){
-                    mDb.deleteLastUpdateMilliTime();
-                    mDb.deleteImgContent();
-                } else {
+                // take care of update time
+                mDb.deleteLastUpdateMilliTime();
+
+                if(isContinueUpdate != true){
                     Log.d(TAG,"save milli time");
                     // save update time
                     saveLastUpdateMilliTime(TimeUtil.getTodayMilli());
