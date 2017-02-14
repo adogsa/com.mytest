@@ -33,14 +33,12 @@ public class MyImgItemRecyclerViewAdapter extends RecyclerView.Adapter<MyImgItem
     private Context mParentContext = null;
 
     public MyImgItemRecyclerViewAdapter(List<ImageContent.OneImageItem> items, OnListFragmentInteractionListener listener) {
-        System.out.println(TAG + " jjw MyItemRecyclerViewAdapter  ");
         mValues = items;
         mListener = listener;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        System.out.println(TAG + " jjw onCreateViewHolder viewType: " + viewType);
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_item, parent, false);
         mParentContext = parent.getContext();
@@ -49,16 +47,15 @@ public class MyImgItemRecyclerViewAdapter extends RecyclerView.Adapter<MyImgItem
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        System.out.println(TAG + " jjw onBindViewHolder position " + position);
 
         final ImageContent.OneImageItem oneImgObj = mValues.get(position);
 
         holder.mItem = oneImgObj;
         holder.mTitleView.setText(oneImgObj.title);
+        holder.mFoodSuffsView.setText(oneImgObj.food_stuffs);
         String one_img_url = oneImgObj.img_url;
-//        holder.mImgUrlView.setText(one_img_url);
 
-        if(StringUtil.isEmpty(one_img_url) == false){
+        if (StringUtil.isEmpty(one_img_url) == false) {
             // 이미지 표현
             Glide.with(mParentContext).load(one_img_url).into(holder.mOneImgView);
 
@@ -90,7 +87,7 @@ public class MyImgItemRecyclerViewAdapter extends RecyclerView.Adapter<MyImgItem
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mTitleView;
-//        public final TextView mImgUrlView;
+        public final TextView mFoodSuffsView;
         public final ImageView mOneImgView;
 
         public ImageContent.OneImageItem mItem;
@@ -99,7 +96,7 @@ public class MyImgItemRecyclerViewAdapter extends RecyclerView.Adapter<MyImgItem
             super(view);
             mView = view;
             mTitleView = (TextView) view.findViewById(R.id.title);
-//            mImgUrlView = (TextView) view.findViewById(R.id.img_url);
+            mFoodSuffsView = (TextView) view.findViewById(R.id.food_stuffs);
             mOneImgView = (ImageView) view.findViewById(R.id.oneimage);
         }
 

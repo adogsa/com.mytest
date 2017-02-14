@@ -1,9 +1,12 @@
 package jjw.com.myfirstapp;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,10 +21,10 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.toast.android.analytics.GameAnalytics;
-import com.toast.android.analytics.common.utils.NetworkUtil;
 import com.toast.android.analytics.common.utils.WebUtil;
 import com.toast.android.analytics.googleplayservices.GooglePlayServicesManager;
 
+import jjw.com.fragment.FoodStuffFragment;
 import jjw.com.fragment.ItemFragment;
 import jjw.com.fragment.model.ImageContent;
 
@@ -35,6 +38,14 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        android.app.FragmentManager fm = getFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.jjw_blank_fragment);
+
+//        FragmentTransaction tr = fm.beginTransaction();
+//        ItemFragment vodContents = new ItemFragment();
+//        tr.replace(R.id.jjw_blank_fragment, vodContents);
+//        tr.commit();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -111,11 +122,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
-
-
-
     @Override
     public void onBackPressed() {
 
@@ -158,10 +164,13 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // in first, you should declare this activity in Androidmanifest.xml
-//            Intent goPicture = new Intent(this, PictureListActivity.class);
+
+//            android.app.FragmentManager fm = getFragmentManager();
+//            Fragment fragment = fm.findFragmentById(R.id.jjw_blank_fragment);
 //
-//            startActivity(goPicture);
+//            FragmentTransaction tr = fm.beginTransaction();
+//            tr.replace(R.id.jjw_blank_fragment, new FoodStuffFragment());
+//            tr.commit();
 
             Snackbar.make(findViewById(R.id.drawer_layout), "기획중입니다.", Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
@@ -200,14 +209,16 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentInteraction(ImageContent.OneImageItem item) {
-        Snackbar.make(findViewById(R.id.drawer_layout), "onListFragmentInteraction", Snackbar.LENGTH_LONG)
+        Snackbar.make(findViewById(R.id.drawer_layout), "웹페이지로 이동합니다.", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
 
         WebUtil.openUrl(this, item.web_link);
     }
 
 
-    /** Called when leaving the activity */
+    /**
+     * Called when leaving the activity
+     */
     @Override
     public void onPause() {
         // background 상태로 전환된 것을 서버에게  알림
@@ -219,7 +230,9 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
     }
 
-    /** Called when returning to the activity */
+    /**
+     * Called when returning to the activity
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -232,7 +245,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /** Called before the activity is destroyed */
+    /**
+     * Called before the activity is destroyed
+     */
     @Override
     public void onDestroy() {
         if (mAdView != null) {

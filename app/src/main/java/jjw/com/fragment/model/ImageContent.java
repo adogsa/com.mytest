@@ -1,11 +1,13 @@
 package jjw.com.fragment.model;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
+import com.google.android.gms.appdatasearch.DocumentId;
 import com.toast.android.analytics.GameAnalytics;
 import com.toast.android.analytics.common.utils.JsonUtils;
 import com.toast.android.analytics.common.utils.StringUtil;
@@ -25,6 +27,7 @@ import jjw.com.fragment.ItemFragment;
 import jjw.com.fragment.MyImgItemRecyclerViewAdapter;
 import jjw.com.fragment.MyItemRecyclerViewAdapter;
 import jjw.com.myfirstapp.R;
+import jjw.com.utill.DialogUtil;
 import jjw.com.utill.LoadJSONUtil;
 import jjw.com.utill.TimeUtil;
 
@@ -51,7 +54,7 @@ public class ImageContent {
     private long mLastUserUpdateTime = 0;
     private String mRecentVer = "";
 
-    public void makeList(String jsonUrl, View view, ItemFragment.OnListFragmentInteractionListener listener){
+    public void makeList(Activity activity, String jsonUrl, View view, ItemFragment.OnListFragmentInteractionListener listener){
         Log.d(TAG,"jjw makeList");
 
         mView = view;
@@ -70,10 +73,12 @@ public class ImageContent {
             if(CheckShouldUpdate() == true){
                 Log.d(TAG,"jjw makeList call json");
 
+                DialogUtil.showProgressDialog(activity, "서버에서 정보를 받아오는 중입니다.");
                 new LoadJSONUtil(new onLoadJsonDataListener()).execute(JSON_URL);
             } else {
 
                 if(ITEMS.size() == 0){
+                    DialogUtil.showProgressDialog(activity, "서버에서 정보를 받아오는 중입니다.");
                     new LoadJSONUtil(new onLoadJsonDataListener()).execute(JSON_URL);
                 } else {
                     showItemListInView();
@@ -93,17 +98,19 @@ public class ImageContent {
         public final String title;
         public final String img_url;
         public final String web_link;
+        public final String food_stuffs;
 
-        public OneImageItem(String title, String img_url, String web_link) {
+        public OneImageItem(String title, String img_url, String web_link, String food_stuffs) {
             this.title = title;
             this.img_url = img_url;
             this.web_link = web_link;
+            this.food_stuffs = food_stuffs;
         }
 
         @Override
         public String toString() {
             return " title:" + title + "\n img:" + img_url + "\n" +
-                    " web:" + web_link;
+                    " web:" + web_link + " foodstuffs:" + food_stuffs;
         }
     }
 
@@ -115,6 +122,7 @@ public class ImageContent {
         public void onLoaded(String jsonData) {
 
             try {
+
                 GameAnalytics.traceEvent("NETWORK", "launching_code", "MakeData", GameAnalytics.getVersion(), 1, 10);
 
                 JSONObject json = new JSONObject(jsonData);
@@ -122,9 +130,11 @@ public class ImageContent {
                 int itemCount = Integer.valueOf(LoadJSONUtil.getJsonValue(vodUrlObj, "itemCount"));
                 boolean isContinueUpdate = "Y".equalsIgnoreCase(LoadJSONUtil.getJsonValue(vodUrlObj, "isContinueUpdate") );
                 boolean isEnforceDb = "Y".equalsIgnoreCase(LoadJSONUtil.getJsonValue(vodUrlObj, "isEnforceDb") );
+                int contentsCnt = Integer.parseInt(LoadJSONUtil.getJsonValue(vodUrlObj, "itemCount") );
 
                 // if isEnforceDb is Y and
-                if(isEnforceDb == true && ITEMS.size() != 0){
+
+                if(  (isEnforceDb == true && ITEMS.size() != 0 ) || ITEMS.size() == contentsCnt){
 
                     // Set List adapter
                     showItemListInView();
@@ -134,14 +144,16 @@ public class ImageContent {
 
                 // take care of update time
                 mDb.deleteImgContent();
+                ITEMS.clear();
 
                 for(int index = 0; index < itemCount; index++){
                     JSONObject oneItem = vodUrlObj.getJSONObject("item" + index);
 
                     OneImageItem data = new OneImageItem(
-                        LoadJSONUtil.getJsonValue(oneItem, "title"),
+                        LoadJSONUtil.getJsonValue(oneItem, "title").replaceAll("\\[15분 레시피\\] ", ""),
                         LoadJSONUtil.getJsonValue(oneItem, "imgUrl"),
-                        LoadJSONUtil.getJsonValue(oneItem, "webLink")
+                        LoadJSONUtil.getJsonValue(oneItem, "webLink"),
+                        (LoadJSONUtil.getJsonValue(oneItem, "foodStuffs")).replaceAll(" ", "")
                     );
 
                     Log.d(TAG,"save imgContent");
@@ -184,6 +196,8 @@ public class ImageContent {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
             recyclerView.setAdapter(new MyImgItemRecyclerViewAdapter(ITEMS, mListClickListener));
             recyclerView.getAdapter().notifyDataSetChanged();
+
+            DialogUtil.hideAllProgressDialog();
         }
     }
 

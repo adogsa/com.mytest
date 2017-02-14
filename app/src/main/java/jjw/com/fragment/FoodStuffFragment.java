@@ -2,14 +2,11 @@ package jjw.com.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import jjw.com.fragment.dummy.DummyContent;
 import jjw.com.fragment.model.ImageContent;
 import jjw.com.myfirstapp.R;
 
@@ -19,9 +16,9 @@ import jjw.com.myfirstapp.R;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class ItemFragment2 extends Fragment {
+public class FoodStuffFragment extends Fragment {
 
-    private String TAG = ItemFragment2.class.getSimpleName();
+    private String TAG = FoodStuffFragment.class.getSimpleName();
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
@@ -32,13 +29,13 @@ public class ItemFragment2 extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ItemFragment2() {
+    public FoodStuffFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ItemFragment2 newInstance(int columnCount) {
-        ItemFragment2 fragment = new ItemFragment2();
+    public static FoodStuffFragment newInstance(int columnCount) {
+        FoodStuffFragment fragment = new FoodStuffFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -61,7 +58,7 @@ public class ItemFragment2 extends Fragment {
                              Bundle savedInstanceState) {
         System.out.println(TAG + " jjw onCreateView  ");
 
-        View view = inflater.inflate(R.layout.fragment_item_list, container, false);
+        View view = inflater.inflate(R.layout.foodstuff_list, container, false);
 
 
 
@@ -69,18 +66,18 @@ public class ItemFragment2 extends Fragment {
 
 
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-//                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            }
-//            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
-        }
+//        // Set the adapter
+//        if (view instanceof RecyclerView) {
+//            Context context = view.getContext();
+//            RecyclerView recyclerView = (RecyclerView) view;
+//            if (mColumnCount <= 1) {
+//                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+//            } else {
+////                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+//                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+//            }
+////            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+//        }
         return view;
     }
 
@@ -88,15 +85,15 @@ public class ItemFragment2 extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
-        System.out.println(TAG + " jjw onAttach  ");
-
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
+//
+//        System.out.println(TAG + " jjw onAttach  ");
+//
+//        if (context instanceof OnListFragmentInteractionListener) {
+//            mListener = (OnListFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnListFragmentInteractionListener");
+//        }
     }
 
     @Override

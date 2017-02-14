@@ -44,6 +44,7 @@ public class ImageContentDB extends SQLiteOpenHelper {
         System.out.println("jjw ImageContentDB oncreate");
         String CREATE_IMGCONTENT_CACHE_TABLE = "CREATE TABLE IF NOT EXISTS ImageContentCache" +
                 "(seq INTEGER PRIMARY KEY AUTOINCREMENT" +
+                ", food_stuffs TEXT" +
                 ", web_link TEXT" +
                 ", img_url TEXT" +
                 ", title TEXT )";
@@ -72,6 +73,7 @@ public class ImageContentDB extends SQLiteOpenHelper {
         try {
             db = this.getWritableDatabase();
             ContentValues e = new ContentValues();
+            e.put("food_stuffs", oneImg.food_stuffs);
             e.put("web_link", oneImg.web_link);
             e.put("img_url", oneImg.img_url);
             e.put("title", oneImg.title);
@@ -120,7 +122,7 @@ public class ImageContentDB extends SQLiteOpenHelper {
         ArrayList<ImageContent.OneImageItem> resultList = new ArrayList<ImageContent.OneImageItem>();
 
         try {
-            String sqlquery = " select seq, title, img_url, web_link FROM ImageContentCache ";
+            String sqlquery = " select seq, title, img_url, web_link, food_stuffs FROM ImageContentCache ";
             if(StringUtil.isEmpty(keyword) != true){
                 sqlquery = sqlquery + "where " + column + " like '%" + keyword + "%'";
             }
@@ -131,7 +133,7 @@ public class ImageContentDB extends SQLiteOpenHelper {
 
             while(cursor.moveToNext()) {
 
-                ImageContent.OneImageItem item = new ImageContent.OneImageItem(cursor.getString(1), cursor.getString(2), cursor.getString(3));
+                ImageContent.OneImageItem item = new ImageContent.OneImageItem(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
 
                 resultList.add(item);
             }
@@ -151,7 +153,6 @@ public class ImageContentDB extends SQLiteOpenHelper {
 
         return resultList;
     }
-
 
     public long getLastUpdateMilliTime() {
         Cursor cursor = null;

@@ -42,19 +42,19 @@
             android:layout_width="wrap_content"
             android:id="@+id/search_button"
             android:layout_alignParentRight="true"
-            android:text="조회"
+            android:text="조회2"
             />
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/item_fr_list"
-        android:name="jjw.com.myfirstapp.ItemFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layoutManager="LinearLayoutManager"
-        tools:context="jjw.com.fragment.ItemFragment"
-        tools:listitem="@layout/fragment_item" />
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+        <!--xmlns:tools="http://schemas.android.com/tools"-->
+        <!--android:id="@+id/item_fr_list"-->
+        <!--android:name="jjw.com.myfirstapp.ItemFragment"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:layoutManager="LinearLayoutManager"-->
+        <!--tools:context="jjw.com.fragment.ItemFragment"-->
+        <!--tools:listitem="@layout/fragment_item" />-->
 </LinearLayout>
 
