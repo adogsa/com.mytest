@@ -1,12 +1,9 @@
 package jjw.com.myfirstapp;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,7 +21,6 @@ import com.toast.android.analytics.GameAnalytics;
 import com.toast.android.analytics.common.utils.WebUtil;
 import com.toast.android.analytics.googleplayservices.GooglePlayServicesManager;
 
-import jjw.com.fragment.FoodStuffFragment;
 import jjw.com.fragment.ItemFragment;
 import jjw.com.fragment.model.ImageContent;
 
@@ -38,9 +34,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        android.app.FragmentManager fm = getFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.jjw_blank_fragment);
 
+//        android.app.FragmentManager fm = getFragmentManager();
 //        FragmentTransaction tr = fm.beginTransaction();
 //        ItemFragment vodContents = new ItemFragment();
 //        tr.replace(R.id.jjw_blank_fragment, vodContents);
@@ -114,6 +109,7 @@ public class MainActivity extends AppCompatActivity
         // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("D463CED16AB0C9E4B48A70FE361EC08B")
                 .build();
 
         // Start loading the ad in the background.
@@ -167,10 +163,6 @@ public class MainActivity extends AppCompatActivity
 
 //            android.app.FragmentManager fm = getFragmentManager();
 //            Fragment fragment = fm.findFragmentById(R.id.jjw_blank_fragment);
-//
-//            FragmentTransaction tr = fm.beginTransaction();
-//            tr.replace(R.id.jjw_blank_fragment, new FoodStuffFragment());
-//            tr.commit();
 
             Snackbar.make(findViewById(R.id.drawer_layout), "기획중입니다.", Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();

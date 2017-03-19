@@ -124,7 +124,16 @@ public class ImageContentDB extends SQLiteOpenHelper {
         try {
             String sqlquery = " select seq, title, img_url, web_link, food_stuffs FROM ImageContentCache ";
             if(StringUtil.isEmpty(keyword) != true){
-                sqlquery = sqlquery + "where " + column + " like '%" + keyword + "%'";
+                sqlquery = sqlquery + " where ";
+                String[] keyList = keyword.replaceAll(" ", "").split(",");
+                for (int idx = 0 ; idx < keyList.length; idx++) {
+                    String key = keyList[idx];
+                    if (idx == 0){
+                        sqlquery = (sqlquery + column + " like '%" + key + "%'");
+                    } else {
+                        sqlquery = (sqlquery + " and " + column + " like '%" + key + "%'");
+                    }
+                }
             }
             Log.d(TAG, sqlquery);
 

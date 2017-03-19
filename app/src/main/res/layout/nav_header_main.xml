@@ -32,4 +32,10 @@
         android:text="기획중" />
     <!--android:text="android.studio@android.com"-->
 
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/version_view"-->
+        <!--android:text="버전:1.0.3"-->
+        <!--/>-->
 </LinearLayout>

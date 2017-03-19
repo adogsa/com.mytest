@@ -19,7 +19,6 @@
             android:id="@+id/jjw_blank_fragment"
             class="jjw.com.fragment.ItemFragment"
             />
-        <!--class="jjw.com.fragment.ItemFragment"-->
 
         <com.google.android.gms.ads.AdView
             android:id="@+id/ad_view"

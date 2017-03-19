@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -83,7 +83,7 @@ public class ItemFragment extends Fragment {
         ArrayAdapter yearAdapter = ArrayAdapter.createFromResource(getActivity().getApplicationContext(),
                 R.array.search_type, R.layout.spinner_item);
 
-        yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        yearAdapter.setDropDownViewResource(R.layout.spinner_drop_item);
         searchTpSpinner.setAdapter(yearAdapter);
         searchTpSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
